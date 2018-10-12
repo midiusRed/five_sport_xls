@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "moduleResolution":"node",
+    "module": "commonjs",
+    "target": "es6",
+    "inlineSourceMap": false,
+    "removeComments": true,
+    "allowUnreachableCode": true,
+    "outDir": "./bin/source",
+    "baseUrl": "."
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
