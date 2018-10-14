@@ -5,6 +5,8 @@
     "rm_source": "rm -rf ./bin/source/*",
     "tsc": "/Volumes/MacHD/js/valley_js/dev/node_modules/typescript/bin/tsc | gnomon",
     "tsc_watch": "/Volumes/MacHD/js/valley_js/dev/node_modules/typescript/bin/tsc -w",
-    "persistify_js": "/Volumes/MacHD/js/valley_js/dev/node_modules/.bin/persistify ./bin/source/Main.js -p [/Volumes/MacHD/js/valley_js/dev/mods_modules/pathmodify_mod -e ^src/,./bin/source/] -t /Volumes/MacHD/js/valley_js/dev/node_modules/babelify -o ./html/bundle.js --cache-dir ./bin/cache/ -v | gnomon"
+    "tsc_watch_win": "E:\\code\\js\\valley_js\\dev\\node_modules\\.bin\\tsc -w",
+    "persistify_js": "/Volumes/MacHD/js/valley_js/dev/node_modules/.bin/persistify ./bin/source/Main.js -p [/Volumes/MacHD/js/valley_js/dev/mods_modules/pathmodify_mod -e ^src/,./bin/source/] -t /Volumes/MacHD/js/valley_js/dev/node_modules/babelify -o ./html/bundle.js --cache-dir ./bin/cache/ -v | gnomon",
+    "persistify_js_win": "E:\\code\\js\\valley_js\\dev\\node_modules\\.bin\\persistify .\\bin\\source\\Main.js -p [E:\\code\\js\\valley_js\\dev\\mods_modules\\pathmodify_mod -e \"^src/,./bin/source/\"] -t E:\\code\\js\\valley_js\\dev\\node_modules\\babelify -o .\\html\\bundle.js --cache-dir .\\bin\\cache\\ -v"
   }
 }
