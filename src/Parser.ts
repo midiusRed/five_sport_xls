@@ -138,7 +138,7 @@ export namespace Parser {
 		for (let rowIndex:number = 1; rowIndex <= rows; rowIndex++) {
 			let brand:string = getString(sheet, rowIndex, 'A');
 			if (brand !== 'СНАРЯЖЕНИЕ') {
-				let str:string = getString(sheet, rowIndex, 'D');
+				let str:string = getString(sheet, rowIndex, 'F');
 				let i:number = str.indexOf('   ');
 				if (i > 0) {
 					let title:string = trim(str.substr(i + 1));
@@ -146,8 +146,8 @@ export namespace Parser {
 						title = brand + ' ' + title;
 					}
 					out.push([
-						str.substr(0, i),
-						Math.max(getNumber(sheet, rowIndex, 'O'), getNumber(sheet, rowIndex, 'P')),
+						str.substr(0, i), //артикл
+						Math.max(getNumber(sheet, rowIndex, 'O'), getNumber(sheet, rowIndex, 'P')), //цена
 						getString(sheet, rowIndex, 'N'),
 						getNumber(sheet, rowIndex, 'Q') + getNumber(sheet, rowIndex, 'R') + getNumber(sheet, rowIndex, 'S'),
 						title
