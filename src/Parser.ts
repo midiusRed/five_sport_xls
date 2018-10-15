@@ -77,9 +77,9 @@ export namespace Parser {
 		const allowBrandList:Array<string> = ['ASICS', 'MIZUNO', 'NORDSKI', 'CRAFT', 'CEP'];
 		const articleSplitList:Array<number> = [2, 2, 1, 2, 2];
 		const sizeHash:{ [kind:string]:Array<string> } = {};
-		sizeHash['А'] = ['2',  '2,5', '3',   '3,5', '4',   '4,5', '5',   '5,5', '6',   '6,5', '7',   '7,5', '8', '8,5', '9', '9,5', '10', '10,5', '11', '11,5', '12', '12,5', '13', '13,5', '14', '15', '16'];
+		sizeHash['А'] = ['2',  '2.5', '3',   '3.5', '4',   '4.5', '5',   '5.5', '6',   '6.5', '7',   '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '15', '16'];
 		sizeHash['Е'] = ['',   '3XS', '2XS', 'XS',  'S',   'M',   'L',   'XL',  '2XL', '3XL', '4XL', '5XL'];
-		sizeHash['Д'] = ['',   'К7',  'К8',  'К9',  'К10', 'К11', 'К12', 'К13', '1',   '1,5', '2',   '2,5', '3', '3,5', '4', '4,5', '5', '5,5', '6', '6,5', '7'];
+		sizeHash['Д'] = ['',   'К7',  'К8',  'К9',  'К10', 'К11', 'К12', 'К13', '1',   '1.5', '2',   '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7'];
 		sizeHash['G'] = ['36', '37',  '38',  '39',  '40',  '41',  '42',  '43',  '44',  '45',  '46',  '47',  '48'];
 		const sizeColList:Array<string> = ['M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN'];
 
@@ -103,15 +103,15 @@ export namespace Parser {
 						}
 						if (j > 0) {
 							let article:string = title.substr(i + 1, j - i - 1);
-							title = title.substr(0, i) + title.substr(j + 1);
+							title = title.substr(0, i) + title.substr(j);
 							let price:number = Math.max(
 								getNumber(sheet, rowIndex, 'J'),
 								getNumber(sheet, rowIndex, 'L')
 							);
-							let sizeList:Array<string> = sizeHash[getString(sheet, rowIndex, 'Е')];
+							let sizeList:Array<string> = sizeHash[getString(sheet, rowIndex, 'E')];
 
 							for (let colIndex:number = sizeColList.length - 1; colIndex >= 0; colIndex--) {
-								let count:number = getNumber(sheet, rowIndex, 'AO');
+								let count:number = getNumber(sheet, rowIndex, sizeColList[colIndex]);
 								if (count > 0) {
 									out.push([
 										article,
@@ -141,7 +141,7 @@ export namespace Parser {
 				let str:string = getString(sheet, rowIndex, 'D');
 				let i:number = str.indexOf('   ');
 				if (i > 0) {
-					let title:string = str.substr(i + 1);
+					let title:string = trim(str.substr(i + 1));
 					if (brand.length > 0 && brand !== title.substr(0, brand.length)) {
 						title = brand + ' ' + title;
 					}
