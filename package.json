@@ -3,10 +3,12 @@
   "scripts": {
     "browser-sync": "cd ./html && browser-sync start -s=./ -f=bundle.js --index=test.html",
     "rm_source": "rm -rf ./bin/source/*",
-    "tsc": "/Volumes/MacHD/js/valley_js/dev/node_modules/typescript/bin/tsc | gnomon",
-    "tsc_watch": "/Volumes/MacHD/js/valley_js/dev/node_modules/typescript/bin/tsc -w",
+    "tsc": "/Volumes/MacHD/Flash/redspell/valley/js/dev/node_modules/typescript/bin/tsc | gnomon",
+    "tsc_watch": "/Volumes/MacHD/Flash/redspell/valley/js/dev/node_modules/typescript/bin/tsc -w",
     "tsc_watch_win": "E:\\code\\js\\valley_js\\dev\\node_modules\\.bin\\tsc -w",
     "persistify_js": "/Volumes/MacHD/js/valley_js/dev/node_modules/.bin/persistify ./bin/source/Main.js -p [/Volumes/MacHD/js/valley_js/dev/mods_modules/pathmodify_mod -e ^src/,./bin/source/] -t /Volumes/MacHD/js/valley_js/dev/node_modules/babelify -o ./html/bundle.js --cache-dir ./bin/cache/ -v | gnomon",
-    "persistify_js_win": "E:\\code\\js\\valley_js\\dev\\node_modules\\.bin\\persistify .\\bin\\source\\Main.js -p [E:\\code\\js\\valley_js\\dev\\mods_modules\\pathmodify_mod -e \"^src/,./bin/source/\"] -t E:\\code\\js\\valley_js\\dev\\node_modules\\babelify -o .\\html\\bundle.js --cache-dir .\\bin\\cache\\ -v"
+    "persistify_js_win": "E:\\code\\js\\valley_js\\dev\\node_modules\\.bin\\persistify .\\bin\\source\\Main.js -p [E:\\code\\js\\valley_js\\dev\\mods_modules\\pathmodify_mod -e \"^src/,./bin/source/\"] -t E:\\code\\js\\valley_js\\dev\\node_modules\\babelify -o .\\html\\bundle.js --cache-dir .\\bin\\cache\\ -v",
+    
+    "calendar": "/Volumes/MacHD/Flash/redspell/valley/js/dev/node_modules/typescript/bin/tsc -t es6 --outFile html/calendar.js calendar.ts"
   }
 }
