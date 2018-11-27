@@ -1,14 +1,10 @@
 {
   "dependencies": {},
   "scripts": {
-    "browser_sync": "cd ./html && browser-sync start -s=./ -f=*.js",
-    "rm_source": "rm -rf ./bin/source/*",
-    "tsc": "/Volumes/MacHD/Flash/redspell/valley/js/dev/node_modules/typescript/bin/tsc | gnomon",
-    "tsc_watch": "/Volumes/MacHD/Flash/redspell/valley/js/dev/node_modules/typescript/bin/tsc -w",
-    "tsc_watch_win": "E:\\Flash\\redspell\\valley\\js\\dev\\node_modules\\.bin\\tsc -w",
-    "persistify_js": "/Volumes/MacHD/js/valley_js/dev/node_modules/.bin/persistify ./bin/source/Main.js -p [/Volumes/MacHD/js/valley_js/dev/mods_modules/pathmodify_mod -e ^src/,./bin/source/] -t /Volumes/MacHD/js/valley_js/dev/node_modules/babelify -o ./html/test.js --cache-dir ./bin/cache/ -v | gnomon",
-    "persistify_js_win": "E:\\Flash\\redspell\\valley\\js\\dev\\node_modules\\.bin\\persistify .\\bin\\source\\Main.js -p [E:\\Flash\\redspell\\valley\\js\\dev\\mods_modules\\pathmodify_mod -e \"^src/,./bin/source/\"] -t E:\\Flash\\redspell\\valley\\js\\dev\\node_modules\\babelify -o .\\html\\test.js --cache-dir .\\bin\\cache\\ -v",
-    
+    "fs": "./node_modules/.bin/tsc -t es6 --outFile ./html/five_sport.js ./five_sport/Main.ts | gnomon",
     "calendar": "/Volumes/MacHD/Flash/redspell/valley/js/dev/node_modules/typescript/bin/tsc -t es6 --outFile html/calendar.js calendar.ts"
+  },
+  "devDependencies": {
+    "typescript": "^3.1.6"
   }
 }

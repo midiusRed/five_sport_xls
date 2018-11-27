@@ -1,5 +1,4 @@
 .DS_store
 .idea/
 *.iml
-/bin/
-/html/test.js
+node_modules/
