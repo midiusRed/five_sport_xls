@@ -63,6 +63,7 @@ for (let i:number = 0; i < data.length; i += 2) {
 		return;
 	}
 	const artRow:number = products.length > 0 ? products[0].indexOf('Код артикула') : -1;
+	console.log('~~~~', artRow);
 	if (artRow < 0) {
 		log('в товарах не удается найти столбец "Код артикула"');
 		return;
@@ -104,18 +105,18 @@ for (let i:number = 0; i < data.length; i += 2) {
 						let id:string = getString(sheet, rowIndex, 'A');
 						if (id && id.length > 0) {
 							for (let product of products) {
-								if (!product[2]) {
+								if (!product[artRow]) {
 									continue;
 								}
-								let curId = product[2].trim();
+								let curId = product[artRow].trim();
 								if (curId === id || curId.replace(idFilter, ' ') === id) {
 									count++;
 									let sellPrice:number = getNumber(sheet, rowIndex, 'C');
 									let buyPrice:number = getNumber(sheet, rowIndex, 'E');
-									out += '\n"' + product[urlRow] + '";;<{' + sizes + '}>;;' + buyPrice + ';' + sellPrice + ';"' + product[artRow] + '"';
+									out += '\n"' + product[urlRow] + '";;<{' + sizes + '}>;;' + buyPrice + ';' + sellPrice + ';"' + curId + '"';
 									for (let col in cols) {
 										out += '\n"' + product[urlRow] + '";' + cols[col] + ';' + cols[col] + ';' + getNumber(sheet, rowIndex, col) +
-											';' + buyPrice + ';' + sellPrice + ';"' + product[artRow] + '"';
+											';' + buyPrice + ';' + sellPrice + ';"' + curId + '"';
 									}
 									if (count >= limit) {
 										break loop;
