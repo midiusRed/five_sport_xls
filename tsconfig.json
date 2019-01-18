@@ -4,9 +4,9 @@
     "module": "commonjs",
     "target": "es6",
     "inlineSourceMap": false,
-    "removeComments": true,
+    "removeComments": false,
     "allowUnreachableCode": true,
-    "outDir": "./bin/source",
+    "outDir": "./html/",
     "baseUrl": "."
   },
   "include": [
