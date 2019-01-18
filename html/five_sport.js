@@ -1,63 +1,15 @@
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Parser_1 = require("src/Parser");
-function log(value) {
-    document.getElementById('log').innerHTML = value;
-}
-function status(id, flag) {
-    document.getElementById(id + '_status').innerText = flag ? 'загружено' : 'ждем...';
-}
-const data = ['ersi', null, Parser_1.Parser.ersi, 'megasport', null, Parser_1.Parser.megasport];
-const f = function (event) {
-    const input = event.target;
-    const file = input.files[0];
-    let len = file.name.length;
-    if (file.name.substr(len - 4) !== '.xls' && file.name.substr(len - 5) !== '.xlsx') {
-        log('поддерживаются тольк xls/xlsx-файлы');
-        return;
-    }
-    const reader = new FileReader();
-    status(input.id, false);
-    reader.onload = function () {
-        data[data.indexOf(input.id) + 1] = new Uint8Array(reader.result);
-        status(input.id, true);
-        document.getElementById(input.id + '_cb').checked = true;
-    };
-    reader.readAsArrayBuffer(file);
-};
-for (let i = 0; i < data.length; i += 3) {
-    document.getElementById(data[i]).addEventListener('change', f, false);
-}
-document.getElementById('bt').addEventListener('click', function () {
-    const XLSX = window['XLSX'];
-    const out = [['Артикул', 'Цена', 'Размер', 'Остаток', 'Название товара']];
-    let workbook;
-    for (let i = 1; i < data.length; i += 3) {
-        if (document.getElementById(data[i - 1] + '_cb').checked && data[i]) {
-            workbook = XLSX.read(data[i], { type: 'array' });
-            if (workbook && workbook.SheetNames.length > 0) {
-                let sheet = workbook.Sheets[workbook.SheetNames[0]];
-                let error = data[i + 1](sheet, XLSX.utils.decode_range(sheet['!ref']), out);
-                if (error) {
-                    log(error);
-                    return;
-                }
-            }
-        }
-    }
-    workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(out), 'FiveSport');
-    XLSX.writeFile(workbook, 'five_sport.xlsx');
-});
-
-},{"src/Parser":2}],2:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var Parser;
 (function (Parser) {
+    const ersiColumns = [
+        'A' /* Марка (бренд) */,
+        'F' /* Номенклатура */,
+        'N' /* Характеристика */,
+        'O' /* 01. РРЦ */,
+        'P' /* 08.МЕГАДИЛЕР */,
+        'Q' /* Магазин №2 (КЗ) */,
+        '' /* ОСНОВНОЙ СКЛАД 3 */,
+        'R' /* ОСНОВНОЙ СКЛАД 6 */
+    ];
     function trim(value, symbol = ' ') {
         let len = value.length;
         if (len > 0) {
@@ -90,15 +42,44 @@ var Parser;
         return 0;
     }
     function megasport(sheet, range, out) {
+        //ASICS 1051A002 400
+        //MIZUNO V1GA1612 71
+        //ADIDAS B40807 
+        //SALOMON L38318100 
+        //JOMA DRIW.815.IN 
+        //MIKASA MT350 0003
+        //TORNADO T312 2650 
+        //GIVOVA AINF05 0004
+        //MEGASPORT MS609Z1 0050
+        //ERREA A245000009
+        //UMBRO 350118 09S
+        //NORDSKI NSM435700 
+        //ERREA D505000009 
+        //ZASPORT OFA217-063/001-BLU
+        //CRAFT 1903716 B999 
+        //WILSON WTB1033XB 
+        //SELECT 810015 052 
+        //TORRES AL00221
+        //KV.REZAC 15015801 
+        //GALA XX41009
+        //MUELLER 130104 
+        //POWERUP 00412 
+        //MACRON 49035 
+        //BUFF 110992.522.10.00
+        //EXENZA G01 EMPIRE
+        //HEAD 285511 
+        //SKINS ZB99320059001 A400 
+        //CEP C188M 5 
+        //нужны asics, mizuno, nordski, craft, cep
         if (range.e.c < 40) {
             return 'megasport требутся не менее 41 столбца';
         }
         const allowBrandList = ['ASICS', 'MIZUNO', 'NORDSKI', 'CRAFT', 'CEP'];
         const articleSplitList = [2, 2, 1, 2, 2];
         const sizeHash = {};
-        sizeHash['А'] = ['2', '2,5', '3', '3,5', '4', '4,5', '5', '5,5', '6', '6,5', '7', '7,5', '8', '8,5', '9', '9,5', '10', '10,5', '11', '11,5', '12', '12,5', '13', '13,5', '14', '15', '16'];
+        sizeHash['А'] = ['2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '15', '16'];
         sizeHash['Е'] = ['', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
-        sizeHash['Д'] = ['', 'К7', 'К8', 'К9', 'К10', 'К11', 'К12', 'К13', '1', '1,5', '2', '2,5', '3', '3,5', '4', '4,5', '5', '5,5', '6', '6,5', '7'];
+        sizeHash['Д'] = ['', 'К7', 'К8', 'К9', 'К10', 'К11', 'К12', 'К13', '1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7'];
         sizeHash['G'] = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48'];
         const sizeColList = ['M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN'];
         const rows = range.e.r + 1;
@@ -115,19 +96,26 @@ var Parser;
                             j = title.indexOf(' ', j + 1);
                             if (j > 0) {
                                 index--;
-                            } else {
+                            }
+                            else {
                                 index = 0;
                             }
                         }
                         if (j > 0) {
                             let article = title.substr(i + 1, j - i - 1);
-                            title = title.substr(0, i) + title.substr(j + 1);
+                            title = title.substr(0, i) + title.substr(j);
                             let price = Math.max(getNumber(sheet, rowIndex, 'J'), getNumber(sheet, rowIndex, 'L'));
-                            let sizeList = sizeHash[getString(sheet, rowIndex, 'Е')];
+                            let sizeList = sizeHash[getString(sheet, rowIndex, 'E')];
                             for (let colIndex = sizeColList.length - 1; colIndex >= 0; colIndex--) {
-                                let count = getNumber(sheet, rowIndex, 'AO');
+                                let count = getNumber(sheet, rowIndex, sizeColList[colIndex]);
                                 if (count > 0) {
-                                    out.push([article, price, sizeList && colIndex > 0 && colIndex - 1 < sizeList.length ? sizeList[colIndex - 1] : '', count, title]);
+                                    out.push([
+                                        article,
+                                        price,
+                                        sizeList && colIndex > 0 && colIndex - 1 < sizeList.length ? sizeList[colIndex - 1] : '',
+                                        count,
+                                        title
+                                    ]);
                                 }
                             }
                         }
@@ -139,27 +127,91 @@ var Parser;
     }
     Parser.megasport = megasport;
     function ersi(sheet, range, out) {
-        if (range.e.c < 18) {
-            return 'ersi требутся не менее 19 столбцов';
-        }
+        // if (range.e.c < 18) {
+        // 	return 'ersi требутся не менее 19 столбцов';
+        // }
         const rows = range.e.r + 1;
         for (let rowIndex = 1; rowIndex <= rows; rowIndex++) {
-            let brand = getString(sheet, rowIndex, 'A');
+            let brand = getString(sheet, rowIndex, ersiColumns[0]);
             if (brand !== 'СНАРЯЖЕНИЕ') {
-                let str = getString(sheet, rowIndex, 'D');
+                let str = getString(sheet, rowIndex, ersiColumns[1]);
                 let i = str.indexOf('   ');
                 if (i > 0) {
-                    let title = str.substr(i + 1);
+                    let title = trim(str.substr(i + 1));
                     if (brand.length > 0 && brand !== title.substr(0, brand.length)) {
                         title = brand + ' ' + title;
                     }
-                    out.push([str.substr(0, i), Math.max(getNumber(sheet, rowIndex, 'O'), getNumber(sheet, rowIndex, 'P')), getString(sheet, rowIndex, 'N'), getNumber(sheet, rowIndex, 'Q') + getNumber(sheet, rowIndex, 'R') + getNumber(sheet, rowIndex, 'S'), title]);
+                    let count = 0;
+                    for (let k = 5; k <= 7; k++) {
+                        if (ersiColumns[k]) {
+                            count += getNumber(sheet, rowIndex, ersiColumns[k]);
+                        }
+                    }
+                    out.push([
+                        str.substr(0, i),
+                        Math.max(getNumber(sheet, rowIndex, ersiColumns[3]), getNumber(sheet, rowIndex, ersiColumns[4])),
+                        getString(sheet, rowIndex, ersiColumns[2]),
+                        count,
+                        title
+                    ]);
                 }
             }
         }
         return null;
     }
     Parser.ersi = ersi;
-})(Parser = exports.Parser || (exports.Parser = {}));
-
-},{}]},{},[1]);
+})(Parser || (Parser = {})); //end namespace Parser
+function showError(value) {
+    document.getElementById('log').innerHTML = value;
+}
+function showStatus(id, flag) {
+    document.getElementById(id + '_status').innerText = flag ? 'загружено' : 'ждем...';
+}
+const data = [
+    'ersi', null, Parser.ersi,
+    'megasport', null, Parser.megasport
+];
+const f = function (event) {
+    const input = event.target;
+    const file = input.files[0];
+    let len = file.name.length;
+    if (file.name.substr(len - 4) !== '.xls' && file.name.substr(len - 5) !== '.xlsx') {
+        showError('поддерживаются тольк xls/xlsx-файлы');
+        return;
+    }
+    const reader = new FileReader();
+    showStatus(input.id, false);
+    reader.onload = function () {
+        data[data.indexOf(input.id) + 1] = new Uint8Array(reader.result);
+        showStatus(input.id, true);
+        document.getElementById(input.id + '_cb').checked = true;
+    };
+    reader.readAsArrayBuffer(file);
+};
+for (let i = 0; i < data.length; i += 3) {
+    document.getElementById(data[i]).addEventListener('change', f, false);
+}
+document.getElementById('bt').addEventListener('click', function () {
+    const XLSX = window['XLSX'];
+    const out = [
+        ['Артикул', 'Цена', 'Размер', 'Остаток', 'Название товара']
+    ];
+    let workbook;
+    for (let i = 1; i < data.length; i += 3) {
+        if (document.getElementById(data[i - 1] + '_cb').checked && data[i]) {
+            workbook = XLSX.read(data[i], { type: 'array' });
+            if (workbook && workbook.SheetNames.length > 0) {
+                let sheet = workbook.Sheets[workbook.SheetNames[0]];
+                let error = data[i + 1](sheet, XLSX.utils.decode_range(sheet['!ref']), out);
+                if (error) {
+                    showError(error);
+                    return;
+                }
+            }
+        }
+    }
+    //сохраняем xlsx
+    workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(out), 'FiveSport');
+    XLSX.writeFile(workbook, 'five_sport.xlsx');
+});
