@@ -1,5 +1,6 @@
 const eRSi = {};
 eRSi['одежда'] = { H: 'XS', I: 'S', J: 'M', K: 'L', L: 'XL', M: 'XXL', N: 'XXXL' };
+eRSi['обувь'] = { K: '6', L: '6.5', M: '7', N: '7.5', O: '8', P: '8.5', Q: '9', R: '9.5', S: '10', T: '10.5', U: '11', V: '11.5', W: '12', X: '12.5', Y: '13', Z: '13.5', AA: '14', AB: '15' };
 function log(value) {
     document.getElementById('log').innerHTML = value;
 }
@@ -21,6 +22,17 @@ document.getElementById('products').addEventListener('change', event => {
         showStatus(input.id, true);
     };
     reader.readAsText(file);
+}, false);
+let ignoreList;
+document.getElementById('ignore').addEventListener('change', event => {
+    const input = event.target;
+    const reader = new FileReader();
+    showStatus(input.id, false);
+    reader.onload = () => {
+        ignoreList = reader.result.split(',').map(art => art.trim());
+        showStatus(input.id, true);
+    };
+    reader.readAsText(input.files[0]);
 }, false);
 const data = [
     'ersi', null
@@ -56,7 +68,6 @@ document.getElementById('bt').addEventListener('click', function () {
         return;
     }
     const artRow = products.length > 0 ? products[0].indexOf('Код артикула') : -1;
-    console.log('~~~~', artRow);
     if (artRow < 0) {
         log('в товарах не удается найти столбец "Код артикула"');
         return;
@@ -92,7 +103,7 @@ document.getElementById('bt').addEventListener('click', function () {
                     const rows = range.e.r + 1;
                     for (let rowIndex = rows; rowIndex > 0; rowIndex--) {
                         let id = getString(sheet, rowIndex, 'A');
-                        if (id && id.length > 0) {
+                        if (id && id.length > 0 && (!ignoreList || ignoreList.indexOf(id) < 0)) {
                             for (let product of products) {
                                 if (!product[artRow]) {
                                     continue;
