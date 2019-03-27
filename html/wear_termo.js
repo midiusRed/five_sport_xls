@@ -1,5 +1,21 @@
 const eRSi = {};
 eRSi['одежда'] = { H: 'XS', I: 'S', J: 'M', K: 'L', L: 'XL', M: 'XXL', N: 'XXXL' };
+eRSi['обувь'] = { G: '4', H: '4.5', I: '5', J: '5.5', K: '6', L: '6.5', M: '7', N: '7.5', O: '8', P: '8.5', Q: '9', R: '9.5', S: '10', T: '10.5', U: '11', V: '11.5', W: '12', X: '12.5', Y: '13', Z: '13.5', AA: '14', AB: '15' };
+const sizeTransform = {
+    '4.5': '"4,5"',
+    '5.5': '"5,5"',
+    '6.5': '"6,5"',
+    '7.5': '"7,5"',
+    '8.5': '"8,5"',
+    '9.5': '"9,5"',
+    '10.5': '"10,5"',
+    '11.5': '"11,5"',
+    '12.5': '"12,5"',
+    '13.5': '"13,5"'
+};
+function getSizeTitle(value) {
+    return value in sizeTransform ? sizeTransform[value] : value;
+}
 function log(value) {
     document.getElementById('log').innerHTML = value;
 }
@@ -21,6 +37,17 @@ document.getElementById('products').addEventListener('change', event => {
         showStatus(input.id, true);
     };
     reader.readAsText(file);
+}, false);
+let ignoreList;
+document.getElementById('ignore').addEventListener('change', event => {
+    const input = event.target;
+    const reader = new FileReader();
+    showStatus(input.id, false);
+    reader.onload = () => {
+        ignoreList = reader.result.split(',').map(art => art.trim());
+        showStatus(input.id, true);
+    };
+    reader.readAsText(input.files[0]);
 }, false);
 const data = [
     'ersi', null
@@ -56,7 +83,6 @@ document.getElementById('bt').addEventListener('click', function () {
         return;
     }
     const artRow = products.length > 0 ? products[0].indexOf('Код артикула') : -1;
-    console.log('~~~~', artRow);
     if (artRow < 0) {
         log('в товарах не удается найти столбец "Код артикула"');
         return;
@@ -85,14 +111,14 @@ document.getElementById('bt').addEventListener('click', function () {
                         if (sizes.length > 0) {
                             sizes += ',';
                         }
-                        sizes += cols[col];
+                        sizes += getSizeTitle(cols[col]);
                     }
                     let sheet = workbook.Sheets[sheetName];
                     let range = XLSX.utils.decode_range(sheet['!ref']);
                     const rows = range.e.r + 1;
                     for (let rowIndex = rows; rowIndex > 0; rowIndex--) {
                         let id = getString(sheet, rowIndex, 'A');
-                        if (id && id.length > 0) {
+                        if (id && id.length > 0 && (!ignoreList || ignoreList.indexOf(id) < 0)) {
                             for (let product of products) {
                                 if (!product[artRow]) {
                                     continue;
@@ -104,7 +130,7 @@ document.getElementById('bt').addEventListener('click', function () {
                                     let buyPrice = getNumber(sheet, rowIndex, 'E');
                                     out += '\n"' + product[urlRow] + '";;<{' + sizes + '}>;;' + buyPrice + ';' + sellPrice + ';"' + curId + '"';
                                     for (let col in cols) {
-                                        out += '\n"' + product[urlRow] + '";' + cols[col] + ';' + cols[col] + ';' + getNumber(sheet, rowIndex, col) +
+                                        out += '\n"' + product[urlRow] + '";' + getSizeTitle(cols[col]) + ';' + getSizeTitle(cols[col]) + ';' + getNumber(sheet, rowIndex, col) +
                                             ';' + buyPrice + ';' + sellPrice + ';"' + curId + '"';
                                     }
                                     if (count >= limit) {
