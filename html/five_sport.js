@@ -77,14 +77,14 @@ var Parser;
         const allowBrandList = ['ASICS', 'MIZUNO', 'NORDSKI', 'CRAFT', 'CEP'];
         const articleSplitList = [2, 2, 1, 2, 2];
         const sizeHash = {};
-        sizeHash['А'] = ['2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '15', '16'];
+        sizeHash['А'] = ['1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '15', '16'];
         sizeHash['Е'] = ['', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
         sizeHash['Д'] = ['', 'К7', 'К8', 'К9', 'К10', 'К11', 'К12', 'К13', '1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7'];
-        sizeHash['G'] = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48'];
-        const sizeColList = ['M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN'];
+        sizeHash['G'] = ['', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48'];
+        const sizeColList = ['M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO'];
         const rows = range.e.r + 1;
         for (let rowIndex = 1; rowIndex <= rows; rowIndex++) {
-            if (getNumber(sheet, rowIndex, 'AO') > 0) {
+            if (getNumber(sheet, rowIndex, 'AP') > 0) {
                 let title = getString(sheet, rowIndex, 'A');
                 let i = title.indexOf(' ');
                 if (i > 0) {
@@ -104,7 +104,7 @@ var Parser;
                         if (j > 0) {
                             let article = title.substr(i + 1, j - i - 1);
                             title = title.substr(0, i) + title.substr(j);
-                            let price = Math.max(getNumber(sheet, rowIndex, 'J'), getNumber(sheet, rowIndex, 'L'));
+                            let price = Math.max(getNumber(sheet, rowIndex, 'I'), getNumber(sheet, rowIndex, 'K'));
                             let sizeList = sizeHash[getString(sheet, rowIndex, 'E')];
                             for (let colIndex = sizeColList.length - 1; colIndex >= 0; colIndex--) {
                                 let count = getNumber(sheet, rowIndex, sizeColList[colIndex]);
